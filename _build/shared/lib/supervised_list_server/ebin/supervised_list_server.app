@@ -1,0 +1,10 @@
+{application,supervised_list_server,
+             [{registered,[]},
+              {description,"supervised_list_server"},
+              {applications,[exlager]},
+              {mod,{'Elixir.SupervisedListServer',[]}},
+              {vsn,"0.0.1"},
+              {modules,['Elixir.ListData','Elixir.ListServer',
+                        'Elixir.ListSubSupervisor','Elixir.ListSupervisor',
+                        'Elixir.SupervisedListServer',
+                        'Elixir.SupervisedListServer.Supervisor']}]}.

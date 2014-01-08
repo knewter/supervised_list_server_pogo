@@ -1,0 +1,28 @@
+2013-12-19 07:03:10 =ERROR REPORT====
+** Generic server list terminating 
+** Last message in was {'$gen_cast',crash}
+** When Server state == {[book,cane],<0.153.0>}
+** Reason for termination == 
+** {{badmatch,2},[{'Elixir.ListServer',handle_cast,2,[{file,"/home/jadams/elixir/supervised_list_server/lib/list_server.ex"},{line,52}]},{gen_server,handle_msg,5,[{file,"gen_server.erl"},{line,604}]},{proc_lib,init_p_do_apply,3,[{file,"proc_lib.erl"},{line,239}]}]}
+2013-12-19 07:03:10 =CRASH REPORT====
+  crasher:
+    initial call: Elixir.ListServer:init/1
+    pid: <0.155.0>
+    registered_name: list
+    exception exit: {{{badmatch,2},[{'Elixir.ListServer',handle_cast,2,[{file,"/home/jadams/elixir/supervised_list_server/lib/list_server.ex"},{line,52}]},{gen_server,handle_msg,5,[{file,"gen_server.erl"},{line,604}]},{proc_lib,init_p_do_apply,3,[{file,"proc_lib.erl"},{line,239}]}]},[{gen_server,terminate,6,[{file,"gen_server.erl"},{line,744}]},{proc_lib,init_p_do_apply,3,[{file,"proc_lib.erl"},{line,239}]}]}
+    ancestors: [<0.154.0>,<0.152.0>,<0.150.0>]
+    messages: []
+    links: [<0.154.0>]
+    dictionary: []
+    trap_exit: false
+    status: running
+    heap_size: 610
+    stack_size: 27
+    reductions: 314
+  neighbours:
+2013-12-19 07:03:10 =SUPERVISOR REPORT====
+     Supervisor: {<0.154.0>,'Elixir.ListSubSupervisor'}
+     Context:    child_terminated
+     Reason:     {{badmatch,2},[{'Elixir.ListServer',handle_cast,2,[{file,"/home/jadams/elixir/supervised_list_server/lib/list_server.ex"},{line,52}]},{gen_server,handle_msg,5,[{file,"gen_server.erl"},{line,604}]},{proc_lib,init_p_do_apply,3,[{file,"proc_lib.erl"},{line,239}]}]}
+     Offender:   [{pid,<0.155.0>},{name,'Elixir.ListServer'},{mfargs,{'Elixir.ListServer',start_link,[<0.153.0>]}},{restart_type,permanent},{shutdown,5000},{child_type,worker}]
+

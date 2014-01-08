@@ -1,0 +1,153 @@
+#!/bin/sh
+
+set -e
+
+readlink_f() {
+  cd "$(dirname "$1")" > /dev/null
+
+  local filename="$(basename "$1")"
+
+  if [ -h "$filename" ]; then
+    readlink_f "$(readlink "$filename")"
+  else
+    echo "`pwd -P`/$filename"
+  fi
+}
+
+SELF=$(readlink_f "$0")
+SCRIPT_PATH=$(dirname "$SELF")
+RELEASE_PATH=$(dirname "$SCRIPT_PATH")
+
+APP=supervised_list_server
+HOSTNAME=`hostname -f`
+SERVER_NODE=$APP@$HOSTNAME
+CONTROL_NODE=$APP$$@$HOSTNAME
+
+alive() {
+  $SCRIPT_PATH/elixir --name $CONTROL_NODE -e 'Pogo.alive! :"'$SERVER_NODE'"'
+
+  return $?
+}
+
+start() {
+  if alive; then
+    echo "$APP is already running"
+    exit 0
+  fi
+
+  if [ -f "$RELEASE_PATH/etc/$APP.config" ]; then
+    export ELIXIR_ERL_OPTS="-config $RELEASE_PATH/etc/$APP.config"
+  fi
+
+  if [ "$#" != 0 ]; then
+    export ELIXIR_ERL_OPTS="$ELIXIR_ERL_OPTS $@"
+  fi
+
+  $SCRIPT_PATH/elixir --name $SERVER_NODE --app $APP --no-halt --detached
+
+  if alive; then
+    echo "$APP started as $SERVER_NODE";
+  else
+    echo "$APP failed to start"
+  fi
+}
+
+stop() {
+  if ! alive; then
+    echo "$APP is not running (or not reachable)"
+    exit 0
+  fi
+
+  $SCRIPT_PATH/elixir --name $CONTROL_NODE -pa ebin -e 'Pogo.stop :"'$SERVER_NODE'"'
+
+  if [ $? ]; then
+    echo "$APP has stopped"
+  else
+    echo "$APP did not stop"
+  fi
+}
+
+restart() {
+  if ! alive; then
+    echo "$APP is unreachable"
+    exit 1
+  fi
+
+  $SCRIPT_PATH/elixir --name $CONTROL_NODE -pa ebin -e 'Pogo.restart :"'$SERVER_NODE'"'
+}
+
+reboot() {
+  if ! alive; then
+    echo "$APP is unreachable"
+    exit 1
+  fi
+
+  $SCRIPT_PATH/elixir --name $CONTROL_NODE -pa ebin -e 'Pogo.reboot :"'$SERVER_NODE'"'
+}
+
+console() {
+  if alive; then
+    echo "$APP is already running"
+    exit 0
+  fi
+
+  if [ -f "$RELEASE_PATH/etc/$APP.config" ]; then
+    export ELIXIR_ERL_OPTS="-config $RELEASE_PATH/etc/$APP.config"
+  fi
+
+  if [ "$#" != 0 ]; then
+    export ELIXIR_ERL_OPTS="$@"
+  fi
+
+  exec $SCRIPT_PATH/iex --name $SERVER_NODE --app $APP
+}
+
+attach() {
+  if ! alive; then
+    echo "$APP is unreachable"
+    exit 1
+  fi
+
+  exec $SCRIPT_PATH/iex --remsh $SERVER_NODE --name $CONTROL_NODE
+}
+
+status() {
+  if alive; then
+    echo "$APP is running"
+    exit 0
+  else
+    echo "$APP could not be reached"
+    exit 1
+  fi
+}
+
+case "$1" in
+  start)
+    shift
+    start $@
+    ;;
+  stop)
+    stop
+    ;;
+  restart)
+    restart
+    ;;
+  reboot)
+    reboot
+    ;;
+  console)
+    shift
+    console $@
+    ;;
+  attach)
+    attach
+    ;;
+  status)
+    status
+    ;;
+  *)
+    echo "Usage: $0 (start|stop|restart|reboot|console|attach|status)"
+    exit 1
+esac
+
+exit $?

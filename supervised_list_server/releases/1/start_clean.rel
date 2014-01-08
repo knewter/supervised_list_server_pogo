@@ -1,0 +1,3 @@
+{release,{"start_clean","1"},
+         {erts,"5.10.4"},
+         [{kernel,"2.16.4",permanent,[]},{stdlib,"1.19.4",permanent,[]}]}.

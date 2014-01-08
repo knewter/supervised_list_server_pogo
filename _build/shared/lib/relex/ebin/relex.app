@@ -1,0 +1,13 @@
+{application,relex,
+             [{registered,[]},
+              {description,"relex"},
+              {applications,[sasl]},
+              {vsn,"0.0.1"},
+              {modules,['Elixir.Inspect.Relex.App','Elixir.Mix.Tasks.Relex',
+                        'Elixir.Mix.Tasks.Relex.Assemble',
+                        'Elixir.Mix.Tasks.Relex.Clean','Elixir.Relex',
+                        'Elixir.Relex.App','Elixir.Relex.App.NotFound',
+                        'Elixir.Relex.Files','Elixir.Relex.Release',
+                        'Elixir.Relex.Release.Behaviour',
+                        'Elixir.Relex.Release.StartClean',
+                        'Elixir.Relex.Release.Template']}]}.
